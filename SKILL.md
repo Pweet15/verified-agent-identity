@@ -145,7 +145,7 @@ node scripts/verifySignature.js --did did:iden3:billions:main:2VmAk... --token e
 
 ### telegramEthMonitorBot.js
 
-**Command**: `TELEGRAM_BOT_TOKEN=<bot-token> npm run telegram:eth`
+**Command**: `cd scripts && TELEGRAM_BOT_TOKEN=<bot-token> npm run telegram:eth`
 **Description**: Runs a Telegram long-polling bot that reports the current ETH price and sends threshold alerts using CoinGecko price data.
 **Environment Variables**:
 

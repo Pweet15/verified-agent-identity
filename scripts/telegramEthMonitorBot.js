@@ -214,22 +214,26 @@ function createBot({ token, allowedChatId, defaultCurrency, pollSeconds }) {
 
   async function checkWatches() {
     for (const [chatId, watch] of watches.entries()) {
-      const price = await fetchEthPrice(watch.currency);
-      const crossed =
-        (watch.direction === "above" && price >= watch.target) ||
-        (watch.direction === "below" && price <= watch.target);
+      try {
+        const price = await fetchEthPrice(watch.currency);
+        const crossed =
+          (watch.direction === "above" && price >= watch.target) ||
+          (watch.direction === "below" && price <= watch.target);
 
-      if (crossed && !watch.triggered) {
-        watch.triggered = true;
-        await sendMessage(
-          token,
-          chatId,
-          `ETH alert: ${formatPrice(price, watch.currency)} is ${watch.direction} ${formatPrice(watch.target, watch.currency)}.`,
-        );
-      }
+        if (crossed && !watch.triggered) {
+          watch.triggered = true;
+          await sendMessage(
+            token,
+            chatId,
+            `ETH alert: ${formatPrice(price, watch.currency)} is ${watch.direction} ${formatPrice(watch.target, watch.currency)}.`,
+          );
+        }
 
-      if (!crossed && watch.triggered) {
-        watch.triggered = false;
+        if (!crossed && watch.triggered) {
+          watch.triggered = false;
+        }
+      } catch (error) {
+        console.error(`Watch check failed for chat ${chatId}: ${error.message}`);
       }
     }
   }

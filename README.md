@@ -81,7 +81,7 @@ The repository includes a lightweight Telegram bot that uses Telegram long polli
 3. Start the bot:
 
    ```bash
-   TELEGRAM_BOT_TOKEN=<bot-token> npm run telegram:eth
+   cd scripts && TELEGRAM_BOT_TOKEN=<bot-token> npm run telegram:eth
    ```
 
 Optional environment variables:
