@@ -34,7 +34,20 @@ function normalizeCurrency(value) {
   return (value || DEFAULT_CURRENCY).trim().toLowerCase();
 }
 
+function validateCurrency(currency) {
+  try {
+    new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: currency.toUpperCase(),
+    });
+  } catch {
+    throw new Error(`Unsupported currency: ${currency}`);
+  }
+}
+
 function formatPrice(price, currency) {
+  validateCurrency(currency);
+
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: currency.toUpperCase(),
@@ -46,6 +59,7 @@ function parseWatchCommand(text, defaultCurrency) {
   const [, direction, target, currency] = text.trim().split(/\s+/);
   const normalizedDirection = direction && direction.toLowerCase();
   const parsedTarget = Number(target);
+  const normalizedCurrency = normalizeCurrency(currency || defaultCurrency);
 
   if (!["above", "below"].includes(normalizedDirection)) {
     throw new Error("Use `/watch above <price>` or `/watch below <price>`.");
@@ -55,10 +69,12 @@ function parseWatchCommand(text, defaultCurrency) {
     throw new Error("Watch price must be a positive number.");
   }
 
+  validateCurrency(normalizedCurrency);
+
   return {
     direction: normalizedDirection,
     target: parsedTarget,
-    currency: normalizeCurrency(currency || defaultCurrency),
+    currency: normalizedCurrency,
     triggered: false,
   };
 }
@@ -268,6 +284,7 @@ function createBot({ token, allowedChatId, defaultCurrency, pollSeconds }) {
 function loadConfig() {
   const token = getRequiredEnv("TELEGRAM_BOT_TOKEN");
   const defaultCurrency = normalizeCurrency(process.env.ETH_PRICE_CURRENCY);
+  validateCurrency(defaultCurrency);
   const configuredPollSeconds = getPositiveIntegerEnv(
     "ETH_PRICE_POLL_SECONDS",
     DEFAULT_POLL_SECONDS,
