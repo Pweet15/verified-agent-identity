@@ -63,6 +63,45 @@ This skill enables AI agents to create, manage, link, prove and verify ownership
 - **Human-Agent Linking**: Link a human identity to an agent's DID through signed challenges
 - **Proof Generation**: Generate cryptographic proofs to authenticate as a specific identity
 - **Proof Verification**: Verify proofs to confirm identity ownership
+- **ETH Price Monitoring**: Run a Telegram bot that reports current ETH price and sends threshold alerts
+
+## Telegram ETH Price Monitor
+
+The repository includes a lightweight Telegram bot that uses Telegram long polling and CoinGecko's public price API. It requires Node.js 20+ and does not add any extra npm dependencies.
+
+### Setup
+
+1. Create a Telegram bot with [@BotFather](https://t.me/BotFather) and copy its token.
+2. Install script dependencies:
+
+   ```bash
+   cd scripts && npm install
+   ```
+
+3. Start the bot:
+
+   ```bash
+   cd scripts && TELEGRAM_BOT_TOKEN=<bot-token> npm run telegram:eth
+   ```
+
+Optional environment variables:
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `TELEGRAM_ALLOWED_CHAT_ID` | unset | Restricts the bot to one Telegram chat ID. |
+| `ETH_PRICE_CURRENCY` | `usd` | Default currency for `/price` and `/watch`. |
+| `ETH_PRICE_POLL_SECONDS` | `60` | Watch-check interval. Values below `15` are clamped to `15`. |
+
+### Bot commands
+
+| Command | Description |
+| --- | --- |
+| `/price` | Show current ETH price. |
+| `/watch above <price> [currency]` | Alert when ETH is at or above the target. |
+| `/watch below <price> [currency]` | Alert when ETH is at or below the target. |
+| `/status` | Show the active alert for the chat. |
+| `/unwatch` | Clear the active alert. |
+| `/help` | Show command help. |
 
 ## Architecture
 
@@ -111,7 +150,8 @@ Prompt injection and arbitrary code execution are structurally impossible: the e
 ### Network and External Binary Policy
 
 - All external http calls will be made to trusted resources.
-- No external binary other than `openclaw` is invoked.
+- Identity scripts do not invoke any external binary other than `openclaw`.
+- The Telegram ETH monitor makes HTTPS requests to Telegram Bot API and CoinGecko only.
 - Any external URLs or verification links produced by the scripts are delivered to the user as a plain text message via `openclaw message send`. The agent has no ability to follow, fetch, open, or interact with those URLs in any way - it only forwards the string to the user.
 
 ## Documentation
