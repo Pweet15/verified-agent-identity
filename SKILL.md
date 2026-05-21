@@ -143,6 +143,30 @@ node scripts/verifySignature.js --did did:iden3:billions:main:2VmAk... --token e
 
 ---
 
+### telegramEthMonitorBot.js
+
+**Command**: `TELEGRAM_BOT_TOKEN=<bot-token> npm run telegram:eth`
+**Description**: Runs a Telegram long-polling bot that reports the current ETH price and sends threshold alerts using CoinGecko price data.
+**Environment Variables**:
+
+- `TELEGRAM_BOT_TOKEN` - (required) Telegram bot token from BotFather
+- `TELEGRAM_ALLOWED_CHAT_ID` - (optional) restricts the bot to a single Telegram chat ID
+- `ETH_PRICE_CURRENCY` - (optional) default price currency, defaults to `usd`
+- `ETH_PRICE_POLL_SECONDS` - (optional) alert polling interval, defaults to `60` and is clamped to a minimum of `15`
+
+**Bot Commands**:
+
+```text
+/price
+/watch above <price> [currency]
+/watch below <price> [currency]
+/status
+/unwatch
+/help
+```
+
+---
+
 ## Restrictions / Guardrails (CRITICAL)
 
 **CRITICAL - Always Follow These Rules:**
